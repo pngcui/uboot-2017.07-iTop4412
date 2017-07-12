@@ -15,11 +15,18 @@
 #include <asm/arch/power.h>
 #include <asm/arch/spl.h>
 #include <asm/arch/spi.h>
+#include <debug_uart.h>
 
 #include "common_setup.h"
 #include "clock_init.h"
 
 DECLARE_GLOBAL_DATA_PTR;
+
+/*
+ * WARNING: This is going away very soon. Don't use it and don't submit
+ * pafches that rely on it. The global_data area is set up in crt0.S.
+ */
+gd_t gdata __attribute__ ((section(".data")));
 
 /* Index into irom ptr table */
 enum index {
@@ -254,8 +261,34 @@ void copy_uboot_to_ram(void)
 		break;
 	}
 
-	if (copy_bl2)
-		copy_bl2(offset, size, CONFIG_SYS_TEXT_BASE);
+#ifdef CONFIG_TARGET_SKYCUI4412
+   if (copy_bl2) {
+       /*
+            * Here I use iram 0x020250000-0x020260000 (64k)
+            * as an buffer, and copy u-boot from sd card to 
+            * this buffer, then copy it to dram started 
+            * from 0x43e00000.
+            *
+            */
+           unsigned int i, count = 0;
+           unsigned char *buffer = (unsigned char *)0x02050000;
+           unsigned char *dst = (unsigned char *)CONFIG_SYS_TEXT_BASE;
+           unsigned int step = (0x10000 / 512);
+   
+           for (count = 0; count < BL2_SIZE_BLOC_COUNT; count += step) {
+               /* copy u-boot from sdcard to iram firstly.  */
+               copy_bl2((u32)(BL2_START_OFFSET+count), (u32)step, (u32)buffer);
+               /* then copy u-boot from iram to dram. */
+               for (i = 0; i < 0x10000; i++) {
+                   *dst++ = buffer[i];
+               }
+           }
+   }
+#else
+   if (copy_bl2) {
+       copy_bl2(offset, size, CONFIG_SYS_TEXT_BASE);
+   }
+#endif
 }
 
 void memzero(void *s, size_t n)
@@ -283,6 +316,8 @@ static void setup_global_data(gd_t *gdp)
 	gd->have_console = 1;
 }
 
+#include <version.h>
+
 void board_init_f(unsigned long bootflag)
 {
 	__aligned(8) gd_t local_gd;
@@ -292,6 +327,8 @@ void board_init_f(unsigned long bootflag)
 
 	if (do_lowlevel_init())
 		power_exit_wakeup();
+
+    printascii("\r\nU-Boot SPL " PLAIN_VERSION " (" U_BOOT_DATE " - " U_BOOT_TIME ")\r\n");
 
 	copy_uboot_to_ram();
 

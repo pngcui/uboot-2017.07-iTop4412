@@ -1,0 +1,88 @@
+/*
+ * Skycui4412 board device tree source
+ *
+ * Copyright (c) 2017 pngcui
+ *		<pngcui1224@163.com>
+ *
+ * SPDX-License-Identifier:	GPL-2.0+
+ */
+
+/dts-v1/;
+#include "exynos4412.dtsi"
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+
+/ {
+   model = "SKY skycui 4412 Elite board";
+   compatible = "sky,skycui4412-elite", "samsung,exynos4412", "samsung,exynos4";
+
+   chosen {
+       stdout-path = "serial3:115200n8";
+   };
+
+   aliases {
+       serial3 = "/serial@13830000";
+       console = "/serial@13830000";
+       mmc2 = "/sdhci@12530000";
+   };
+
+   leds {
+       compatible = "gpio-leds";
+
+       led2 {
+           label = "red:system";
+           gpios = <&gpl2 0 GPIO_ACTIVE_HIGH>;
+           default-state = "off";
+           linux,default-trigger = "heartbeat";
+       };
+
+       led3 {
+           label = "red:user";
+           gpios = <&gpk1 1 GPIO_ACTIVE_HIGH>;
+           default-state = "off";
+       };
+   };
+
+   gpio-keys {
+       compatible = "gpio-keys";
+
+       home {
+           label = "GPIO Key Home";
+           linux,code = <KEY_HOME>;
+           gpios = <&gpx1 1 GPIO_ACTIVE_LOW>;
+       };
+
+       back {
+           label = "GPIO Key Back";
+           linux,code = <KEY_BACK>;
+           gpios = <&gpx1 2 GPIO_ACTIVE_LOW>;
+       };
+
+       sleep {
+           label = "GPIO Key Sleep";
+           linux,code = <KEY_POWER>;
+           gpios = <&gpx3 3 GPIO_ACTIVE_LOW>;
+       };
+
+       vol-up {
+           label = "GPIO Key Vol+";
+           linux,code = <KEY_UP>;
+           gpios = <&gpx2 1 GPIO_ACTIVE_LOW>;
+       };
+
+       vol-down {
+           label = "GPIO Key Vol-";
+           linux,code = <KEY_DOWN>;
+           gpios = <&gpx2 0 GPIO_ACTIVE_LOW>;
+       };
+   };
+
+   serial3:serial@13830000 {
+       status = "okay";
+   };
+
+   sdhci@12530000 {
+       samsung,bus-width = <4>;
+       status = "okay";
+   };
+};

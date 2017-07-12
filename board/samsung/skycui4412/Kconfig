@@ -1,0 +1,12 @@
+if TARGET_SKYCUI4412
+
+config SYS_BOARD
+	default "skycui4412"
+
+config SYS_VENDOR
+	default "samsung"
+
+config SYS_CONFIG_NAME
+	default "skycui4412"
+
+endif

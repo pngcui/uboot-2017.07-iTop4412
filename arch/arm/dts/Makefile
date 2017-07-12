@@ -9,12 +9,14 @@ dtb-$(CONFIG_AT91FAMILY) += at91sam9260-smartweb.dtb \
 
 dtb-$(CONFIG_S5PC100) += s5pc1xx-smdkc100.dtb
 dtb-$(CONFIG_S5PC110) += s5pc1xx-goni.dtb
+#add exynos4412-skycui4412.dtb by pngcui
 dtb-$(CONFIG_EXYNOS4) += exynos4210-origen.dtb \
 	exynos4210-smdkv310.dtb \
 	exynos4210-universal_c210.dtb \
 	exynos4210-trats.dtb \
 	exynos4412-trats2.dtb \
-	exynos4412-odroid.dtb
+	exynos4412-odroid.dtb	\
+	exynos4412-skycui4412.dtb
 
 dtb-$(CONFIG_TARGET_HIKEY) += hi6220-hikey.dtb
 

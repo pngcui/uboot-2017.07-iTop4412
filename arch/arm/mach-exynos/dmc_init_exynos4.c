@@ -28,6 +28,28 @@
 #include "common_setup.h"
 #include "exynos4_setup.h"
 
+#ifdef CONFIG_TARGET_SKYCUI4412
+struct mem_timings mem = {
+   .direct_cmd_msr = {
+       DIRECT_CMD1, DIRECT_CMD2, DIRECT_CMD3, DIRECT_CMD4
+   },
+   .timingref = 0x000000BB,
+   .timingrow = 0x7846654F,
+   .timingdata = 0x46400506,
+   .timingpower = 0x52000A3C,
+   .zqcontrol = 0xE3855503,
+   .control0 = 0x71101008,
+   .control1 = 0x20000086,
+   .control2 = 0x00000000,
+   .concontrol = 0x0FFF30CA,
+   .prechconfig = 0x64000000,
+   .memcontrol = 0x00302600,
+   .memconfig0 = 0x40801333,
+   .memconfig1 = 0x60801333,
+   .dll_resync = FORCE_DLL_RESYNC,
+   .dll_on = DLL_CONTROL_ON,
+};
+#else
 struct mem_timings mem = {
 	.direct_cmd_msr = {
 		DIRECT_CMD1, DIRECT_CMD2, DIRECT_CMD3, DIRECT_CMD4
@@ -48,6 +70,7 @@ struct mem_timings mem = {
 	.dll_resync = FORCE_DLL_RESYNC,
 	.dll_on = DLL_CONTROL_ON,
 };
+#endif
 static void phy_control_reset(int ctrl_no, struct exynos4_dmc *dmc)
 {
 	if (ctrl_no) {
@@ -120,7 +143,9 @@ static void dmc_init(struct exynos4_dmc *dmc)
 	 * Additional Latancy for PLL: 1 Cycle
 	 */
 	writel(mem.memcontrol, &dmc->memcontrol);
-
+#ifdef CONFIG_TARGET_SKYCUI4412
+   writel(0x8000001F, &dmc->ivcontrol);
+#endif
 	writel(mem.memconfig0, &dmc->memconfig0);
 	writel(mem.memconfig1, &dmc->memconfig1);
 
@@ -164,7 +189,7 @@ static void dmc_init(struct exynos4_dmc *dmc)
 	/* turn on DREX0, DREX1 */
 	writel((mem.concontrol | AREF_EN), &dmc->concontrol);
 }
-
+#if 1
 void mem_ctrl_init(int reset)
 {
 	struct exynos4_dmc *dmc;
@@ -175,6 +200,7 @@ void mem_ctrl_init(int reset)
 	 * 0: full_sync
 	 */
 	writel(1, ASYNC_CONFIG);
+#ifndef CONFIG_TARGET_SKYCUI4412
 #ifdef CONFIG_ORIGEN
 	/* Interleave: 2Bit, Interleave_bit1: 0x15, Interleave_bit0: 0x7 */
 	writel(APB_SFR_INTERLEAVE_CONF_VAL, EXYNOS4_MIU_BASE +
@@ -204,6 +230,7 @@ void mem_ctrl_init(int reset)
 		ABP_SFR_SLV_ADDRMAP_CONF_OFFSET);
 #endif
 #endif
+#endif
 	/* DREX0 */
 	dmc = (struct exynos4_dmc *)samsung_get_base_dmc_ctrl();
 	dmc_init(dmc);
@@ -211,3 +238,4 @@ void mem_ctrl_init(int reset)
 					+ DMC_OFFSET);
 	dmc_init(dmc);
 }
+#endif

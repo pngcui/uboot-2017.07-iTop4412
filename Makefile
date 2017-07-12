@@ -246,6 +246,12 @@ ifeq ($(HOSTARCH),$(ARCH))
 CROSS_COMPILE ?=
 endif
 
+#add by pngcui
+ARCH=arm
+ifeq (arm,$(ARCH))
+CROSS_COMPILE ?=arm-none-linux-gnueabi-
+endif
+
 KCONFIG_CONFIG	?= .config
 export KCONFIG_CONFIG
 
