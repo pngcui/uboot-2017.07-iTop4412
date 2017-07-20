@@ -13,6 +13,8 @@ if ! make ; then
 	exit 1;
 fi
 
+./mkbl2 u-boot.bin checksum_bl2_14k.bin 14336
+
 cp -rf u-boot.bin $sec_path
 
 cd $sec_path
