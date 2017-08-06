@@ -158,6 +158,15 @@ ENTRY(cpu_init_cp15)
 #endif
 	mcr	p15, 0, r0, c1, c0, 0
 
+//add by pngcui
+	#if 1
+    ldr r0, =0x11000080
+    ldr r1, [r0]
+    bic r1, r1, #0xf00
+    orr r1, r1, #0x100
+    str r1, [r0]
+    #endif
+
 #ifdef CONFIG_ARM_ERRATA_716044
 	mrc	p15, 0, r0, c1, c0, 0	@ read system control register
 	orr	r0, r0, #1 << 11	@ set bit #11

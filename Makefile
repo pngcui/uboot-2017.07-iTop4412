@@ -882,9 +882,11 @@ quiet_cmd_copy = COPY    $@
 ifeq ($(CONFIG_OF_SEPARATE),y)
 u-boot-dtb.bin: u-boot-nodtb.bin dts/dt.dtb FORCE
 	$(call if_changed,cat)
-
+	
 u-boot.bin: u-boot-dtb.bin FORCE
 	$(call if_changed,copy)
+#	$(OBJCOPY) ${OBJCFLAGS} -O binary $< $@
+
 else
 u-boot.bin: u-boot-nodtb.bin FORCE
 	$(call if_changed,copy)

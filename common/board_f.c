@@ -42,6 +42,8 @@
 #include <dm/root.h>
 #include <linux/errno.h>
 
+#include <debug_uart.h>
+
 /*
  * Pointer to initial global data area
  *
@@ -936,6 +938,8 @@ void board_init_f(ulong boot_flags)
 	 */
 	zero_global_data();
 #endif
+
+	printascii("Uboot running.\n\r");
 
 	gd->flags = boot_flags;
 	gd->have_console = 0;
