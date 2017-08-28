@@ -11,8 +11,8 @@ if ! make -j4; then
 fi
 
 echo "making BL2....."
-#split -b 14336 spl/u-boot.bin bl2
-split -b 14336 spl/skycui4412-spl.bin bl2
+split -b 14336 u-boot.bin bl2
+#split -b 14336 spl/skycui4412-spl.bin bl2
 ./chksum
 	
 echo "cat bl1+bl2 to u-boot-SKYCUI-4412.bin"

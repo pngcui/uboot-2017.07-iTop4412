@@ -38,6 +38,15 @@
 
 #define CONFIG_MACH_TYPE       MACH_TYPE_SKYCUI4412
 
+/* pngcui for bl1 */
+#define CONFIG_SPL_BUILD  
+#define CONFIG_SYS_NAND_BASE           (0x0CE00000)
+/* OneNAND configuration */
+#define CFG_ONENAND_BASE 	(0x0C000000)
+#define CFG_ONENANDXL_BASE      (0x0C600000)
+#define CFG_MAX_ONENAND_DEVICE	1
+#define CONFIG_SYS_ONENAND_BASE CFG_ONENAND_BASE
+
 /* select serial console configuration */
 #define CONFIG_SERIAL3
 #define CONFIG_BAUDRATE            115200
